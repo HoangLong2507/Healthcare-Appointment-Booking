@@ -59,7 +59,7 @@ export class AuthController {
   }
 
   async isLoggedIn(req,res,next) {
-    const { token } = req.body;
+    const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
       return next(new AppError('You have not log in. Please log in', 400));
     }
@@ -77,7 +77,10 @@ export class AuthController {
         return next(new AppError('User not found', 404));
       }
       req.user = user;
-      next();
+      res.status(200).json({
+        status: "success",
+        data: user
+      })
     } 
       catch (err) {
       return next(new AppError('Invalid token', 401));

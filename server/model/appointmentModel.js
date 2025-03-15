@@ -2,13 +2,8 @@ import mongoose from 'mongoose';
 import Doctor from './doctorModel.js';
 import User from './userModel.js';
 const AppointmentSchmema = new mongoose.Schema({
-  ID: {
-    type: String,
-    required: [true, 'Please provide the ID'],
-    unique:true
-  },
   date: {
-    type: Date,
+    type: String,
     required: [true, 'Please provide the date']
   },
   time: {

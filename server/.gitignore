@@ -29,4 +29,3 @@ dist-ssr
 # Initial data
 dev-data/
 package-lock.json
-package.json
