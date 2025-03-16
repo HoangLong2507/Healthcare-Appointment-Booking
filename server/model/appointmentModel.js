@@ -22,6 +22,24 @@ const AppointmentSchmema = new mongoose.Schema({
   },
   qrcode: {
     type: String,
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'canceled'],
+    default: 'pending'
+  },
+  canceled_reason: {
+    type: String,
+    default: null
+  },
+  notification: {
+    type: Boolean,
+    default: false
+  },
+  canceledAt: {
+    type: Date,
+    index: { expireAfterSeconds: 2592000 },
+    default: null
   }
 },{
   timestamps:true

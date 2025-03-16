@@ -77,10 +77,7 @@ export class AuthController {
         return next(new AppError('User not found', 404));
       }
       req.user = user;
-      res.status(200).json({
-        status: "success",
-        data: user
-      })
+      next();
     } 
       catch (err) {
       return next(new AppError('Invalid token', 401));
