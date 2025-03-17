@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import router from './routes/index.js';
-
+import redisInstance from './utils/redis.js';
+import notification_periodic from './utils/Notification_schedule.js';
 const app = express();
 
 app.use(express.json());
@@ -22,5 +23,16 @@ app.use((err,req,res,next) => {
     message:err.message
   });
 });
+
+app.locals.redisClient = redisInstance;
+
+// Hàm quit Redis
+app.quitRedis = async () => {
+  try {
+    await redisInstance.quit();
+  } catch (err) {
+    console.error('Error closing Redis:', err);
+  }
+};
 
 export default app;

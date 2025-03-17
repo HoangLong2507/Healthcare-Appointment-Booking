@@ -1,47 +1,51 @@
 import { createClient } from '@redis/client';
 
-export class Redis {
+class Redis {
   constructor() {
-    this.ttl = 24 * 3600 * 1000; 
+    if (Redis.instance) return Redis.instance;
+
     this.client = createClient({
       socket: {
         host: 'localhost',
-        port: 6379
+        port: 6379,
+        reconnectStrategy: (retries) => Math.min(retries * 50, 1000)
       }
     });
 
-    this.client.on('connect', () => {
-      console.log('Redis client connected');
-    });
+    this.client.on('connect', () => console.log('Redis client connected'));
+    this.client.on('error', (err) => console.log(`Redis error: ${err.message}`));
+    this.client.on('reconnecting', () => console.log('Redis client reconnecting...'));
 
-    this.client.on('error', (err) => {
-      console.log(`Something went wrong: ${err}`);
-    });
+    this.connect().catch(err => console.error('Failed to connect Redis:', err));
+    Redis.instance = this;
   }
 
   async connect() {
-    await this.client.connect();
+    if (!this.client.isOpen) await this.client.connect();
   }
 
-  async set(key, value) {
-    await this.client.setEx(key, this.ttl, value);
+  async set(key, value, ttl = 24 * 60 * 60) {
+    await this.connect();
+    await this.client.setEx(key, ttl, value);
   }
 
   async get(key) {
-    try {
-      const value = await this.client.get(key);
-      return value;
-    } catch (err) {
-      console.log(err.message); 
-    }
+    await this.connect();
+    return await this.client.get(key);
   }
 
   async del(key) {
+    await this.connect();
     await this.client.del(key);
   }
 
   async quit() {
-    await this.client.quit();
+    if (this.client.isOpen) {
+      await this.client.quit();
+      console.log('Redis connection closed');
+    }
   }
 }
 
+const redisInstance = new Redis();
+export default redisInstance;

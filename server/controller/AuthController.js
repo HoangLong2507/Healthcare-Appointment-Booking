@@ -2,8 +2,7 @@ import signToken  from "../utils/jwtToken.js";
 import AppError from "../utils/appError.js";
 import jwt from 'jsonwebtoken';
 import User from "../model/userModel.js";
-import {Redis} from '../utils/redis.js';
-const redisInstance = new Redis();
+
 
 
 export class AuthController {
@@ -46,10 +45,8 @@ export class AuthController {
       if (!userID) {
         return next(new AppError('User ID is required', 400));
       }
-  
-      await redisInstance.connect();
-      await redisInstance.del(userID); 
-      await redisInstance.quit();
+      const redisClient = req.app.locals.redisClient;
+      await redisClient.del(userID); 
       console.log("Token deleted from Redis");
   
       res.status(200).json({ status: "success" });
@@ -66,9 +63,9 @@ export class AuthController {
     try {
       
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      await redisInstance.connect();
-      const tokenInRedis = await redisInstance.get(decoded.id);
-      await redisInstance.quit();
+      const redisClient = req.app.locals.redisClient;
+      const tokenInRedis = await redisClient.get(decoded.id);
+
       if (!tokenInRedis) {
         return next(new AppError("Session expired. Please log in again !", 401));
       }
@@ -83,4 +80,5 @@ export class AuthController {
       return next(new AppError('Invalid token', 401));
   }
   } 
+  
 }

@@ -10,18 +10,15 @@ const AppointmentSchmema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide the time']
   },
-  Doctor: {
+  doctor: {
     type: mongoose.Schema.ObjectId,
     ref: 'Doctor',
     required: [true, 'Please provide the doctor']
   },
-  User: {
+  user: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: [true, 'Please provide the user']
-  },
-  qrcode: {
-    type: String,
   },
   status: {
     type: String,

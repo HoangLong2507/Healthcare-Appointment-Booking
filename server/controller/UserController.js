@@ -1,22 +1,30 @@
 import Appointment from "../model/appointmentModel.js";
-import {Redis} from '../utils/redis.js';
 import AppError from '../utils/appError.js';
 import User from '../model/userModel.js';
-const redisInstance = new Redis();
+
 
 export class UserController {
   async createAppointment(req,res,next) {
-    const {date,time,Doctor,User} = req.body;
+    const {date,time,doctor,user} = req.body;
     try {
-      if (!date || !time || !Doctor || !User) {
+      if (!date || !time || !doctor || !user) {
         return next(new AppError('Please provide all the required fields', 400));
       }
-      const appointment = await Appointment.create({date,time,Doctor,User});
-      await redisInstance.connect();
-      const appointment_key = `appointment:${User}`;
+      const targettime = time.split(':')[0];
+      const duplicate_appointments = await Appointment.find({
+        date,
+        time: { $regex: new RegExp(`^${targettime}:`) },
+        doctor
+      });
+      if (duplicate_appointments.length >=3) {
+        return next(new AppError(`Please set new appointment.${targettime}:00 - ${targettime}:59 time slot is full.`,400));
+      }
+      const appointment = await Appointment.create({date,time,doctor,user});
+      const redisClient = req.app.locals.redisClient;
+      const appointment_key = `appointment:${user}`;
       const appointment_value = JSON.stringify(appointment);
-      await redisInstance.set(appointment_key, appointment_value);
-      await redisInstance.quit();
+      await redisClient.set(appointment_key, appointment_value);
+     
       res.status(201).json({
         status: 'success',
         data: appointment
@@ -32,10 +40,10 @@ export class UserController {
       if (!id) {
         return next(new AppError('User ID is required', 400));
       }
-      await redisInstance.connect();
+      const redisClient = req.app.locals.redisClient;
       const appointment_key = `appointment:${id}`;
-      const appointment = await redisInstance.get(appointment_key);
-      await redisInstance.quit();
+      const appointment = await redisClient.get(appointment_key);
+      
       if (!appointment) {
         return next(new AppError('No appointment found', 404));
       }
@@ -52,7 +60,7 @@ export class UserController {
     const userid = req.user._id;
     const {status} = req.body;
     try {
-      const appointments = await Appointment.find({User: userid, status});
+      const appointments = await Appointment.find({user: userid, status});
       if (!appointments) {
         return next(new AppError('No appointment found', 404));
       }
@@ -86,7 +94,7 @@ export class UserController {
   async getHistoryAppointment(req,res,next) {
     const userid = req.user._id;
     try {
-      const appointments = await Appointment.find({User: userid});
+      const appointments = await Appointment.find({user: userid});
       if (!appointments) {
         return next(new AppError('No appointment found', 404));
       }
@@ -115,7 +123,7 @@ export class UserController {
   async deleteAllAppointment(req,res,next) {
     const {id} = req.params;
     try {
-      await Appointment.deleteMany({User: id});
+      await Appointment.deleteMany({user: id});
       res.status(201).json({
         status: 'success',
         message: 'Appointment deleted successfully'

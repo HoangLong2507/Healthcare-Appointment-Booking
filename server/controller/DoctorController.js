@@ -23,7 +23,7 @@ export class DoctorController {
     const {id} = req.params;
     const status = req.body.status || 'pending';
     try {
-      const appointments = await Appointment.find({ Doctor: id, status });
+      const appointments = await Appointment.find({ doctor: id, status });
       res.status(200).json({
         status: 'success',
         data: appointments
