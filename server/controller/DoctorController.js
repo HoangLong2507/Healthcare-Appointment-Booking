@@ -68,5 +68,7 @@ export class DoctorController {
       return next(new AppError('Something went wrong during appointment cancelation', 500));
     } 
   }
+
+
 }
 

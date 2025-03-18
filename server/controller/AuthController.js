@@ -3,8 +3,6 @@ import AppError from "../utils/appError.js";
 import jwt from 'jsonwebtoken';
 import User from "../model/userModel.js";
 
-
-
 export class AuthController {
   async login(req,res,next) {
     const {email,password }= req.body;

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import User from './userModel.js';
 
 const doctorSchema = new mongoose.Schema({
   ID: {
@@ -28,13 +29,31 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide your department']
   },
+  role: {
+    type: String,
+    enum: ['user','doctor', 'admin'],
+    default: 'doctor'
+  },
   status: {
     type: String, 
     enum: ['active', 'inactive'],
     default: 'active'
-
+  },
+  assessment: {
+    type: [{
+      rating: { 
+        type: Number,
+        min: 1,
+        max: 5
+      },
+      comment: {type: String, trim: true},
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        default: null
+      }
+    }]
   }
-
 },{
   timestamps:true
 });

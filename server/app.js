@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import router from './routes/index.js';
 import redisInstance from './utils/redis.js';
-import notification_periodic from './utils/Notification_schedule.js';
+import schedule from './utils/schedule.js';
 const app = express();
 
 app.use(express.json());
@@ -34,5 +34,8 @@ app.quitRedis = async () => {
     console.error('Error closing Redis:', err);
   }
 };
+
+schedule.notification_periodic.start();
+schedule.rating_update_schedule.start();
 
 export default app;

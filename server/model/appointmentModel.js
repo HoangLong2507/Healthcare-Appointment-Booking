@@ -37,6 +37,10 @@ const AppointmentSchmema = new mongoose.Schema({
     type: Date,
     index: { expireAfterSeconds: 2592000 },
     default: null
+  },
+  rating: {
+    type: Boolean,
+    default: false
   }
 },{
   timestamps:true

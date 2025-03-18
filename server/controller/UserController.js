@@ -1,10 +1,12 @@
 import Appointment from "../model/appointmentModel.js";
 import AppError from '../utils/appError.js';
 import User from '../model/userModel.js';
-
+import Doctor from "../model/doctorModel.js";
+import sendEmail from "../utils/email.js";
 
 export class UserController {
   async createAppointment(req,res,next) {
+    const userid = req.user._id;
     const {date,time,doctor,user} = req.body;
     try {
       if (!date || !time || !doctor || !user) {
@@ -20,11 +22,17 @@ export class UserController {
         return next(new AppError(`Please set new appointment.${targettime}:00 - ${targettime}:59 time slot is full.`,400));
       }
       const appointment = await Appointment.create({date,time,doctor,user});
+      
+      // cache in redis
       const redisClient = req.app.locals.redisClient;
       const appointment_key = `appointment:${user}`;
       const appointment_value = JSON.stringify(appointment);
       await redisClient.set(appointment_key, appointment_value);
-     
+      
+      // send confirmation email
+      const cur_user = await User.findById(userid);
+      await sendEmail.send_confirmation_email(cur_user.email,time,date);
+
       res.status(201).json({
         status: 'success',
         data: appointment
@@ -121,9 +129,9 @@ export class UserController {
   }
 
   async deleteAllAppointment(req,res,next) {
-    const {id} = req.params;
+    const userid = req.user._id;
     try {
-      await Appointment.deleteMany({user: id});
+      await Appointment.deleteMany({user: userid});
       res.status(201).json({
         status: 'success',
         message: 'Appointment deleted successfully'
@@ -156,6 +164,26 @@ export class UserController {
       });
     } catch (err) {
       return next(new AppError(err.message, 500));
+    }
+  }
+
+  async updateRating (req,res,next) {
+    const userid = req.user._id;
+    const {id} = req.params; 
+    try{
+      const doctor = await Doctor.findById(id);
+      if(!doctor) {
+        return next(new AppError('Cannot find doctor with this id',404));
+      }
+      const {rating, comment} = req.body;
+      doctor.assessment.push({rating,comment,user:userid});
+      await doctor.save();
+      res.status(200).json({
+        status: "success",
+        message: "Evaluate successfully"
+      });
+    } catch (err) {
+      console.log("Something went wrong:",err);
     }
   }
 }
