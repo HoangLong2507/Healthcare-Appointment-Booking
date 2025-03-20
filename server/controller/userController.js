@@ -3,6 +3,7 @@ import AppError from '../utils/appError.js';
 import User from '../model/userModel.js';
 import Doctor from "../model/doctorModel.js";
 import sendEmail from "../utils/email.js";
+import MedicalRecord from "../model/medical-recordModel.js";
 
 export class UserController {
   async createAppointment(req,res,next) {
@@ -165,6 +166,10 @@ export class UserController {
     } catch (err) {
       return next(new AppError(err.message, 500));
     }
+  }
+
+  async updateMedicalRecod (req,res,next) {
+    //todo
   }
 
   async updateRating (req,res,next) {

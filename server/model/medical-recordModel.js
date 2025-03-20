@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import User from './userModel.js';
 const MedRecordSchema = new mongoose.Schema({
-  User: {
+  user: {
     type: mongoose.Schema.ObjectId,
     required: [true, 'Please provide the user'],
     ref: 'User'
