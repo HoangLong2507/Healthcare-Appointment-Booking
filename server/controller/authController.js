@@ -12,7 +12,7 @@ export class AuthController {
     try {
       const user = await User.findOne({ email }).select('+password');
       if (!user || !await user.correctPassword(password, user.password)) {
-        return next(new AppError('Incorrect email or password', 401));
+        return next(new AppError('Incorrect email or password', 400));
       }
       signToken(user, 200, res);
     } catch (err) {

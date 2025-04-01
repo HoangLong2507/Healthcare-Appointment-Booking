@@ -35,7 +35,7 @@ const rating_update_schedule =  cron.schedule('0 * * * *', async () => {
       const difference = currentTime - appointmentDate.getTime();
       if (difference >= 86400000*3) {
         const curdoctor = await Doctor.findById(doctor);
-        curdoctor.rating.push({rating:5,comment: "",user});
+        curdoctor.assessment.push({rating:5,comment: "",user});
         await curdoctor.save();
       }
     }
