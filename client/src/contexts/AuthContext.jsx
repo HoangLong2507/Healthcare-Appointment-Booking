@@ -41,7 +41,7 @@ export const AuthProvider = ({children}) => {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       localStorage.setItem('token',token);
       localStorage.setItem('user',JSON.stringify(user));
-      setUserInfor(user);
+      
       return {
         success: true,
         user:user
@@ -88,6 +88,7 @@ export const AuthProvider = ({children}) => {
   return ( 
     <AuthContext.Provider 
       value = {{
+        setUserInfor,
         userInfor,
         login,
         logout,

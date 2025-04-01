@@ -15,15 +15,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
   display: flex;
@@ -36,11 +27,31 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+.nav-link {
+  color: #646cff; 
+  font-weight: 400;
+  text-decoration: none;
+  transition: color 0.3s ease, font-weight 0.3s ease; 
+  font-size: 1.8rem
+}
 
+.nav-link:hover {
+  color: #747bff;
+  font-weight: 600; 
+}
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.nav-link.active {
+  color: #747bff; 
+  font-weight: bold; 
+}
+.text-gradient {
+  background: linear-gradient(to right, #3b82f6, #9333ea); /* Gradient từ xanh sang tím */
+  -webkit-background-clip: text; /* Cắt nền theo văn bản */
+  background-clip: text; /* Cắt nền theo văn bản cho các trình duyệt hỗ trợ */
+  color: transparent; /* Ẩn màu nền mặc định của văn bản */
+}
+header {
+  background:linear-gradient(45deg, #FFFFFF, #81D4FA); 
 }
 
 @media (prefers-color-scheme: light) {
