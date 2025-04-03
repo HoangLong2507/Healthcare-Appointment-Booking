@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import Header from "../../components/Header"
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import { FaUser } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { IoEye } from "react-icons/io5";
@@ -57,7 +58,6 @@ export default function Login() {
     <>
       <Header/>
       <div className="min-h-screen min-w-screen flex items-center justify-center bg-gray-200">
-        <ToastContainer />
         <div className="bg-white p-8 rounded-lg shadow-lg w-[35vw] h-72vh] border-4 border-gray-300 border-opacity-50 transition-all duration-300">
           <h2 className="text-5xl font-bold text-center mb-6">Signup</h2>
           <form onSubmit={handleSubmit} >
@@ -263,6 +263,7 @@ export default function Login() {
           </div>
         </div>
       </div>
+      <Footer/>
     </>
     
   );

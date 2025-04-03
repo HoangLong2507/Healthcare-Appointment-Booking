@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header";
-import { ToastContainer } from "react-toastify";
+import Footer from "./components/Footer"
 function App() {
   return (
     <div>
-      <ToastContainer/>
       <Header/>
       <Outlet /> 
+      <Footer/>
     </div>
 );
 }

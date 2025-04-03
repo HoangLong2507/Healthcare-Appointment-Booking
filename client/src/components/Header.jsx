@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from "react-router-dom";
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from "react-router-dom";
-import avatar1 from "../assets/avatar3.png"
+import avatar1 from "../assets/avatar3.webp"
 import { FaChevronDown } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
@@ -19,18 +19,18 @@ export default function Header() {
   const { logout, userInfor } = useAuth();
 
   return (
-    <header className="fixed top-0 left-0 w-full h-[8vh] bg-white shadow-sm z-50">
+    <header className="top-0 left-0 w-full h-[10vh] bg-white shadow-sm z-50">
       <div className="max-w-[75%] h-[100%] mx-auto">
-        <div className="flex justify-between items-center h-[100%]">
+        <div className="flex justify-center items-center h-[100%]">
           {/* Title Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center mr-auto">
             <div className="flex-shrink-0">
               <span onClick={()=>navigate('/')} className="text-5xl font-bold text-gradient cursor-pointer">HealthCare</span>
             </div>
           </div>
 
           {/* Navigation Links */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-8 mr-8">
             {pages.map((page, index) => (
               <NavLink 
                 key={index} 
@@ -49,16 +49,16 @@ export default function Header() {
           {userInfor ? (
             <UserDropdown userInfor={userInfor} logout={logout} />
           ) : (
-            <div className="hidden md:block text-center justify-between space-x-2">
+            <div className="hidden md:block text-center justify-between space-x-4">
               <button
               onClick={()=>navigate('/login')}
-              className="bg-teal-500 text-white text-xl px-4 py-2 rounded-full hover:bg-teal-600 transition duration-300"
+              className="bg-indigo-500 text-white text-2xl px-6 py-3 rounded-full hover:bg-indigo-700 transition duration-300"
               >
                 Login
               </button>
               <button 
               onClick={()=>navigate('/signup')}
-              className="bg-blue-500 text-white text-xl px-4 py-2 rounded-full hover:bg-blue-600 transition duration-300"
+              className="bg-blue-500 text-white text-2xl px-6 py-3 rounded-full hover:bg-blue-700 transition duration-300"
               >
                 Sign up
               </button>
