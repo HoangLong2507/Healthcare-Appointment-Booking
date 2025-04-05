@@ -1,18 +1,196 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import img1 from "../../assets/hospitalimg1.jpg";
 import img2 from "../../assets/hospitalimg2.jpg";
 import img3 from "../../assets/hospitalimg3.jpg";
 import img4 from "../../assets/hospitalimg4.jpg";
 import img5 from "../../assets/hopitalimg5.jpg";
+import healcareimage from "../../assets/healhcare.png"; 
+import { FaArrowRightLong, FaRegStar, FaStar } from "react-icons/fa6";
+import { IoIosArrowDroprightCircle, IoIosArrowDropleftCircle } from "react-icons/io";
+import { FaPlus, FaMinus } from 'react-icons/fa';
 
 export default function Home() {
+  const navigate = useNavigate();
   return (
     <>
       <Slider/>
       <KeyServices/>
+      <HomeIntro navigate={navigate}/>
+      <CardSlider/>
+      <FAQSection/>
     </>
   )
 
+}
+
+const FAQSection = () => {
+  const [currentIndex, setCurrentIndex] = useState(null);
+
+  const faqs = [
+    {
+      question: 'What services do you provide?',
+      answer:
+        'We provide a wide range of healthcare services including preventive care, routine checkups, chronic condition management, and personalized treatment plans.',
+    },
+    {
+      question: 'How can I book an appointment?',
+      answer:
+        'You can book an appointment by clicking the "Get Started" button on our homepage and logging into your account to schedule a visit. Also, you can click on the navigator "Appointment" on the header to redirect to the appointment page.',  
+    },
+    {
+      question: 'Do you accept insurance?',
+      answer:
+        'Yes, we accept most major insurance plans. Please contact our support team for specific details about your coverage.',
+    },
+    {
+      question: 'What are your operating hours?',
+      answer:
+        'Our hospital operates 24/7 for emergency services. Regular appointments are available from 8 AM to 6 PM, Monday to Saturday.',
+    },
+  ];
+
+  const toggleAnswer = (index) => {
+    setCurrentIndex(currentIndex === index ? null : index);
+  };
+
+  return (
+    <div className="w-[50vw] ml-[13vw] mb-24">
+      <h2 className="text-4xl font-bold text-left mb-12 text-gray-800">Some Common Question</h2>
+      <div className="space-y-6">
+        {faqs.map((faq, index) => (
+          <div key={index} className="bg-white rounded-xl shadow-lg">
+            <div
+              className="flex justify-between items-center p-6 cursor-pointer"
+              onClick={() => toggleAnswer(index)}
+            >
+              <h3 className="text-xl font-semibold text-gray-700">{faq.question}</h3>
+              <span className="text-2xl text-gray-500">
+                {currentIndex === index ? <FaMinus /> : <FaPlus />}
+              </span>
+            </div>
+            {currentIndex === index && (
+              <div className="p-6 pt-0 text-gray-600 text-xl border-t border-gray-300">
+                {faq.answer}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const CardSlider = () => {
+  const cards = [
+    { id: 1, img: img1, rating: 4, comment: 'Great product! adsfafdssasđsfadsfsdfdfsdsfâdsdsfadsà', username: 'John Doe' },
+    { id: 2, img: img1, rating: 5, comment: 'Amazing experience.' , username: 'John Doe'},
+    { id: 3, img: img1, rating: 3, comment: 'Good, but could be better.', username: 'John Doe' },
+    { id: 4, img: img1, rating: 4, comment: 'Really liked it!', username: 'John Doe' },
+    { id: 5, img: img1, rating: 2, comment: 'Not what I expected.', username: 'John Doe' },
+    { id: 6, img: img1, rating: 5, comment: 'Perfect, highly recommend!', username: 'John Doe' },
+    { id: 7, img: img1, rating: 5, comment: 'Perfect, highly recommend! ádfsafsdfasdf', username: 'John Doe' },
+  ];
+  
+  const [index, setIndex] = useState(0);
+  
+  const nextSlide = () => {
+    if (index < cards.length - 4) {
+      setIndex(index + 1);
+    }
+  };
+  
+  const prevSlide = () => {
+    if (index > 0) {
+      setIndex(index - 1);
+    }
+  };
+  
+  const getStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(i <= rating ? <FaStar/> : <FaRegStar/>);
+    }
+    return stars;
+  };
+  
+  return (
+    <div className="w-[80vw] mx-auto mb-20 relative">
+      <p className="mb-12 text-4xl font-bold text-left ml-14 text-gray-800">Feedback</p>
+      <div className="w-full flex justify-center items-center mb-4">
+        <div className="w-[94%] overflow-hidden">
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${index * 25}%)` }} 
+          >
+            {cards.map((card) => (
+              <div key={card.id} className="flex-shrink-0 w-1/4 px-2 py-4 h-[40vh]"> 
+                <div className="bg-white rounded-xl shadow-lg">
+                  <div className="flex items-center flex-col justify-center h-52">
+                    <img src={card.img} alt="Card Image" className="rounded-full w-26 h-26 mt-8 mx-auto" />
+                    <p className="text-center text-2xl font-bold mt-auto mb-4">{card.username}</p>
+                  </div>
+                  <div className="border-t-2 border-gray-200 my-2"></div>
+                  <div className="p-4">
+                    <div className="flex items-center justify-center mb-8 mt-4">
+                    {getStars(card.rating).map((star, index) => (
+                      <span key={index} className="text-yellow-500 text-4xl">
+                        {star}
+                      </span>
+                    ))}
+                    </div>
+                    <div className="w-full overflow-hidden whitespace-nowrap">
+                      <div
+                        className="inline-block text-gray-600 text-xl"
+                        style={{ animation: 'roll 6s linear infinite' }}
+                      >
+                        {card.comment}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+  
+      <button
+        onClick={prevSlide}
+        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black text-white p-2 rounded-full hover:bg-gray-800"
+      >
+        <IoIosArrowDropleftCircle size={30} color="white" />
+      </button>
+      <button
+        onClick={nextSlide}
+        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black text-white p-2 rounded-full hover:bg-gray-800"
+      >
+        <IoIosArrowDroprightCircle size={30} color="white" />
+      </button>
+    </div>
+  );
+}
+
+const HomeIntro = ({navigate}) => {
+  return (
+    <div className ="max-w-[75%] mx-auto mt-20 mb-20 flex  justify-center items-center ">
+      <img src={healcareimage} alt="HealCare Image" className="w-[40vw] h-[45vh] rounded-2xl shadow-2xl" />
+      <div className="ml-10 text-left mb-auto">
+        <h1 className="text-5xl font-bold mb-4 text-center">Welcome to Our Hospital</h1>
+        <p className="text-2xl ml-16">We are deeply committed to delivering exceptional healthcare services that prioritize your well-being and the health of your entire family.
+        From preventive care to personalized treatment plans, our dedicated team of professionals works around the clock to ensure you receive the highest standard of medical attention. Whether you are seeking routine checkups, managing a chronic condition, or navigating complex medical needs, we’re here every step of the way — with compassion, expertise, and unwavering support. Your health is not just our mission — it’s our promise.</p>
+        <div className="flex items-center ml-16 mt-4">
+          <p className="text-3xl font-bold">LETS CREATE APPOINTMENT TO JOIN US</p>
+          <button onClick={()=>navigate('/login')} className=" ml-10 text-3xl px-6  items-center justify-center whitespace-nowrap py-3 rounded-3xl flex shadow-lg bg-gradient-to-r from-purple-500 to-blue-500 font-medium tracking-wide transition duration-300 transform hover:scale-105 hover:shadow-xl button-glow">
+            Get Started
+            <span>
+              <FaArrowRightLong className="ml-2 my-auto"  size={20} color="white" />
+            </span>
+          </button>         
+        </div>
+      </div>
+    </div>
+  )
 }
 
 const KeyServices =() => {

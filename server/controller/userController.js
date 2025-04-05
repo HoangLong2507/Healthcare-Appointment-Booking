@@ -4,7 +4,7 @@ import User from '../model/userModel.js';
 import Doctor from "../model/doctorModel.js";
 import sendEmail from "../utils/email.js";
 import MedicalRecord from "../model/medical-recordModel.js";
-
+import Rating from "../model/ratingModel.js";
 export class UserController {
   async createAppointment(req,res,next) {
     const userid = req.user._id;
@@ -172,20 +172,18 @@ export class UserController {
     //todo
   }
 
-  async updateRating (req,res,next) {
-    const userid = req.user._id;
-    const {id} = req.params; 
+  async createRating (req,res,next) {
+    const userid = req.user._id; 
     try{
-      const doctor = await Doctor.findById(id);
-      if(!doctor) {
-        return next(new AppError('Cannot find doctor with this id',404));
-      }
       const {rating, comment} = req.body;
-      doctor.assessment.push({rating,comment,user:userid});
-      await doctor.save();
+      if (!rating) {
+        return next(new AppError('Please provide your rating', 400));
+      }
+      const new_rating = await Rating.create({rating, comment, user: userid});
       res.status(200).json({
         status: "success",
-        message: "Evaluate successfully"
+        message: "Evaluate successfully",
+        rating: new_rating
       });
     } catch (err) {
       console.log("Something went wrong:",err);

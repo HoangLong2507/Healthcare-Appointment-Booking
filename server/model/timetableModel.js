@@ -8,10 +8,16 @@ const timetableSchema = new mongoose.Schema({
   },
   timetable: {
     type: [{
-      date: {type: String, enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      day: {type: String, enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         required: [true, 'Please provide the date']},
-      startTime: {type: String, required: [true, 'Please provide the start time']},
-      endTime: {type: String, required: [true, 'Please provide the end time']}
+      time: {
+        type: [{
+          type: Number,
+          // 0 - None, 1 - Morning shift, 2 - Afternoon shift
+          enum: [0,1,2],
+        }],
+        required: [true, 'Please provide the time']
+    }
     }],
     required: [true, 'Please provide the date']
   }

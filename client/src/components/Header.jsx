@@ -11,7 +11,7 @@ export default function Header() {
   const navigate = useNavigate()
   const pages = [
     { name: "Home", path: "/" },
-    { name: "Appointment", path: "/login"},
+    { name: "Appointment", path: "/appointment" },
     { name: "Doctor", path: "/signup"},
     { name: "AboutUs", path: "/about" }
   ];

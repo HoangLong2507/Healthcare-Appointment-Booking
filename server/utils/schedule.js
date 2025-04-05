@@ -2,6 +2,8 @@ import cron from 'node-cron';
 import Appointment from '../model/appointmentModel.js'; 
 import sendEmail from './email.js';
 import Doctor from '../model/doctorModel.js';
+import User from '../model/userModel.js';
+import Rating from '../model/ratingModel.js';
 
 const notification_periodic =  cron.schedule('* * * * *', async () => {
   try {
@@ -29,14 +31,13 @@ const rating_update_schedule =  cron.schedule('0 * * * *', async () => {
     console.log("Cron is running");
     const upcoming_appointments = await Appointment.find({status: 'approved', rating: false});
     for (const appointment of upcoming_appointments) {
-      const { doctor,user, date, time } = appointment;
+      const { doctor, user, date, time } = appointment;
       const appointmentDate = new Date(`${date} ${time}:00`);
       const currentTime = Date.now();
       const difference = currentTime - appointmentDate.getTime();
       if (difference >= 86400000*3) {
-        const curdoctor = await Doctor.findById(doctor);
-        curdoctor.assessment.push({rating:5,comment: "",user});
-        await curdoctor.save();
+        await Rating.create({user,doctor,comment:"",rating: 5});
+        console.log(`Set rating for appointment: ${appointment._id}`);
       }
     }
   } catch (err) {

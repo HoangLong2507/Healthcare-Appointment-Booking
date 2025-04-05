@@ -1,6 +1,6 @@
 import express from "express";
-import {UserController} from "../controller/UserController.js";
-import {AuthController} from "../controller/AuthController.js";
+import {UserController} from "../controller/userController.js";
+import {AuthController} from "../controller/authController.js";
 
 const router = express.Router();
 
@@ -20,5 +20,8 @@ router.delete('/',
   AuthController.prototype.isLoggedIn,UserController.prototype.deleteAllAppointment);
 router.patch('/updateinformation',
 AuthController.prototype.isLoggedIn,UserController.prototype.updateInformation);
+router.post('/rating',
+AuthController.prototype.isLoggedIn,UserController.prototype.createRating);
+
 
 export default router;

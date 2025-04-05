@@ -1,10 +1,11 @@
 import Appointment from '../model/appointmentModel.js';
 import AppError from '../utils/appError.js';
 import Doctor from '../model/doctorModel.js';
+import Timetable from '../model/timetableModel.js';
 
 export class DoctorController {
   async getAllDoctor_in_Department (req,res,next) {
-    const {department} = req.body;
+    const {department} = req.params;
     try {
       const doctors = await Doctor.find({department});
       if (doctors.length == 0) {
@@ -13,6 +14,22 @@ export class DoctorController {
       res.status(200).json({
         status: 'success',
         data: doctors
+      });
+    } catch (err) {
+      next(new AppError(err.message, 404));
+    }
+  }
+
+  async getDoctorTimetable (req,res,next) {
+    const {id} = req.params;
+    try {
+      const timetable = await Timetable.findOne({doctor: id});
+      if (!timetable) {
+        return next(new AppError('No timetable found for this doctor', 404));
+      }
+      res.status(200).json({
+        status: 'success',
+        data: timetable
       });
     } catch (err) {
       next(new AppError(err.message, 404));
