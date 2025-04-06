@@ -24,9 +24,14 @@ class Redis {
     if (!this.client.isOpen) await this.client.connect();
   }
 
-  async set(key, value, ttl = 24 * 60 * 60) {
+  async setEx(key, value, ttl = 24 * 60 * 60) {
     await this.connect();
     await this.client.setEx(key, ttl, value);
+  }
+
+  async set(key,value) {
+    await this.connect();
+    await this.client.setEx(key, value);
   }
 
   async get(key) {

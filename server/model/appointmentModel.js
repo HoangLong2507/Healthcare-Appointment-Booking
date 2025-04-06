@@ -25,6 +25,10 @@ const AppointmentSchmema = new mongoose.Schema({
     enum: ['pending', 'approved', 'canceled'],
     default: 'pending'
   },
+  reason:{
+    type:String,
+
+  },
   canceled_reason: {
     type: String,
     default: null
@@ -42,6 +46,7 @@ const AppointmentSchmema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
+
 },{
   timestamps:true
 });

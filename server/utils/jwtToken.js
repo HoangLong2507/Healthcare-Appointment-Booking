@@ -7,7 +7,7 @@ const signToken = async (user,statusCode,res) => {
   });
   user.password=undefined;
   try {
-    await redisClient.set(user.ID, token);
+    await redisClient.setEx(user.ID, token);
     
     res.status(statusCode).json({
       status:"success",

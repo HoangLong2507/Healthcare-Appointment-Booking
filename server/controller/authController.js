@@ -74,9 +74,12 @@ export class AuthController {
       req.user = user;
       next();
     } 
-      catch (err) {
+    catch (err) {
+      if (err.name === 'TokenExpiredError') {
+        return next(new AppError('Token has expired. Please log in again!', 401));
+      }
       return next(new AppError('Invalid token', 401));
-  }
+    }
   } 
   
 }

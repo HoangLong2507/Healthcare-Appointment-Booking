@@ -55,12 +55,19 @@ export const AuthProvider = ({children}) => {
     }
 
   }
-  const logout = () => {
+  const logout = async () => {
     delete api.defaults.headers.common['Authorization'];
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
     setUserInfor(null);
+    try {
+      await api.post('/api/v1/authentication/logout');
+    } catch (err) {
+      return {
+        success: false,
+        error: err.response?.data?.message || "Logout failed"
+      };
+    }
   }
 
   const signup = async (ID,Lname,Fname,email,password,dateofbirth,phone_number) => {

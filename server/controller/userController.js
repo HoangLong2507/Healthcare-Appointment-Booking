@@ -23,13 +23,7 @@ export class UserController {
         return next(new AppError(`Please set new appointment.${targettime}:00 - ${targettime}:59 time slot is full.`,400));
       }
       const appointment = await Appointment.create({date,time,doctor,user});
-      
-      // cache in redis
-      const redisClient = req.app.locals.redisClient;
-      const appointment_key = `appointment:${user}`;
-      const appointment_value = JSON.stringify(appointment);
-      await redisClient.set(appointment_key, appointment_value);
-      
+            
       // send confirmation email
       const cur_user = await User.findById(userid);
       await sendEmail.send_confirmation_email(cur_user.email,time,date);
@@ -42,29 +36,7 @@ export class UserController {
       return next(new AppError('Something went wrong during appointment creation', 500));
     }
   }
-
-  async getAppointmentCache(req,res,next) {
-    try {
-      const id = req.user._id;
-      if (!id) {
-        return next(new AppError('User ID is required', 400));
-      }
-      const redisClient = req.app.locals.redisClient;
-      const appointment_key = `appointment:${id}`;
-      const appointment = await redisClient.get(appointment_key);
-      
-      if (!appointment) {
-        return next(new AppError('No appointment found', 404));
-      }
-      res.status(200).json({
-        status: 'success',
-        data: JSON.parse(appointment)
-      });
-    } catch (err) {
-      return next(new AppError(err.message, 500));
-    }
-  }
-
+  
   async getUpcomingAppointment(req,res,next) {
     const userid = req.user._id;
     const {status} = req.body;

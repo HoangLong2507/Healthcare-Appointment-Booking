@@ -9,7 +9,8 @@ import healcareimage from "../../assets/healhcare.png";
 import { FaArrowRightLong, FaRegStar, FaStar } from "react-icons/fa6";
 import { IoIosArrowDroprightCircle, IoIosArrowDropleftCircle } from "react-icons/io";
 import { FaPlus, FaMinus } from 'react-icons/fa';
-
+// import {toast} from 'react-hot-toast'
+// import {useAuth} from '../../contexts/AuthContext'
 export default function Home() {
   const navigate = useNavigate();
   return (
@@ -18,7 +19,10 @@ export default function Home() {
       <KeyServices/>
       <HomeIntro navigate={navigate}/>
       <CardSlider/>
-      <FAQSection/>
+      <div className="flex">
+        <FAQSection/>
+      </div>
+      
     </>
   )
 
@@ -55,7 +59,7 @@ const FAQSection = () => {
   };
 
   return (
-    <div className="w-[50vw] ml-[13vw] mb-24">
+    <div className="w-[40vw] ml-[13vw] mb-24">
       <h2 className="text-4xl font-bold text-left mb-12 text-gray-800">Some Common Question</h2>
       <div className="space-y-6">
         {faqs.map((faq, index) => (
@@ -70,7 +74,7 @@ const FAQSection = () => {
               </span>
             </div>
             {currentIndex === index && (
-              <div className="p-6 pt-0 text-gray-600 text-xl border-t border-gray-300">
+              <div className="p-4  text-gray-600 text-xl border-t border-gray-300">
                 {faq.answer}
               </div>
             )}
@@ -80,6 +84,8 @@ const FAQSection = () => {
     </div>
   );
 };
+
+
 
 const CardSlider = () => {
   const cards = [

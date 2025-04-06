@@ -6,8 +6,6 @@ const router = express.Router();
 
 router.post('/', 
   AuthController.prototype.isLoggedIn, UserController.prototype.createAppointment);
-router.get('/getappointmentcache',
-  AuthController.prototype.isLoggedIn, UserController.prototype.getAppointmentCache);
 router.get('/getappointment',
   AuthController.prototype.isLoggedIn, UserController.prototype.getUpcomingAppointment);
 router.patch('/cancelappointment/:id',

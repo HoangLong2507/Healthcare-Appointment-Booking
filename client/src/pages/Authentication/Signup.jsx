@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import {Toaster,toast} from "react-hot-toast"
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { FaUser } from "react-icons/fa";
@@ -11,7 +11,7 @@ import { IoEyeOff } from "react-icons/io5";
 import { FaIdCard } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
-export default function Login() {
+export default function Signup() {
   const navigate = useNavigate();
   const { signup } = useAuth();
   const [Lname, setLname] = useState("");
@@ -40,10 +40,10 @@ export default function Login() {
 
       if (result && result.success) {
         toast.success("Sign up new account successfully",{
-          autoClose:2000,
-          hideProgressBar:true
+          duration:3000,
+
         })
-        setTimeout(()=>navigate('/login'),2000)
+        setTimeout(()=>navigate('/login'),1000)
 
       } else {
         toast.error(result.error);
@@ -56,6 +56,7 @@ export default function Login() {
 
   return (
     <>
+      <Toaster ariaLive="assertive"/>
       <Header/>
       <div className="min-h-screen min-w-screen flex items-center justify-center bg-gray-200">
         <div className="bg-white p-8 rounded-lg shadow-lg w-[35vw] h-72vh] border-4 border-gray-300 border-opacity-50 transition-all duration-300">
