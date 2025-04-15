@@ -12,21 +12,21 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Các phương thức HTTP được phép
     allowedHeaders: ['Content-Type', 'Authorization'], // Các header được phép
     credentials: true // Nếu bạn cần gửi cookie cùng với request
-  
   }));
 
 app.use('/api/v1', router);
 
 app.use((err,req,res,next) => {
-  res.status(err.statusCode).json({
-    status: err.status,
+  const statusCode = err.statusCode || 500;
+  const status = err.status || 'error';
+  res.status(statusCode).json({
+    status: status,
     message:err.message
   });
 });
 
 app.locals.redisClient = redisInstance;
 
-// Hàm quit Redis
 app.quitRedis = async () => {
   try {
     await redisInstance.quit();

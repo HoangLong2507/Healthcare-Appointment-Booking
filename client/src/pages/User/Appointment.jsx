@@ -11,6 +11,7 @@ export default function Appointment() {
   const [currentDoctorLabel, setCurrentDoctorLabel] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
+  const [reason, setReason] = useState(null);
   const {userInfor} = useAuth();
   const departments = [
     { label: 'Select department', disabled:true},
@@ -68,7 +69,8 @@ export default function Appointment() {
         "date": formatDateToYYYYMMDD(selectedDate),
         "time": selectedTime.split(' ')[0],
         "doctor": currentDoctor,
-        "user": userInfor._id
+        "user": userInfor._id,
+        "reason": reason
       }); 
       if (result.data.status == "success") {
         toast.success("You have booked an appointment successfully",{
@@ -84,6 +86,7 @@ export default function Appointment() {
       setSelectedTime('')
       setDepartment('')
       setCurrentDoctorLabel('')
+      setReason(null);
     } catch(err) {
       toast.error(err.response.data.message, { duration: 2500 });
     }
@@ -93,13 +96,13 @@ export default function Appointment() {
     <>
       <Toaster/>
       <div className="min-h-screen bg-gray-100">
-        <div className=" w-[70vw] mx-auto flex items-center justify-between mt-20 mb-20">
+        <div className=" w-[87vw] mx-auto flex items-center justify-between mt-20 mb-20">
           <div className="w-full p-8 bg-white rounded-xl shadow-lg">
             <h2 className="text-4xl font-bold text-left text-gray-800 mb-8">Book an Appointment</h2>
             <div className="mb-20">
               <div className="flex">
-                <div className="w-[55%] flex">
-                  <div className="w-full flex items-center space-x-6">
+                <div className="w-[55%] flex flex-col justify-center items-center space-y-12">
+                <div className="w-full flex items-center space-x-6">
                     {/* Department Select */}
                     <div className="flex-1">
                       <label
@@ -116,7 +119,7 @@ export default function Appointment() {
                           setCurrentDoctor('');
                           setCurrentDoctorLabel('');
                         }}
-                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-700 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 hover:border-gray-300 transition-all duration-300 ease-in-out appearance-none cursor-pointer"
+                        className="w-full px-4 py-3 bg-white border border-gray-400 rounded-lg shadow-sm text-gray-700 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 hover:border-gray-300 transition-all duration-300 ease-in-out appearance-none cursor-pointer"
                       >
                         {departments.map((dept) => (
                           <option
@@ -149,7 +152,7 @@ export default function Appointment() {
                           setCurrentDoctorLabel(selectedLabel);
                         }}
                         disabled={doctor.length <= 1}
-                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-700 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 hover:border-gray-300 transition-all duration-300 ease-in-out appearance-none cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 bg-white border border-gray-400 rounded-lg shadow-sm text-gray-700 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 hover:border-gray-300 transition-all duration-300 ease-in-out appearance-none cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                       >
                         {doctor.map((doc) => (
                           <option
@@ -164,6 +167,16 @@ export default function Appointment() {
                       </select>
                     </div>
                   </div>
+                  <div className="flex flex-col items-start gap-1 w-full">
+                    <label htmlFor="reason" className="block text-lg font-bold text-gray-700 mb-2 tracking-wide">Symptom</label>
+                    <input
+                      id="reason"
+                      onChange={e => setReason(e.target.value)}
+                      value={reason}
+                      type="text"
+                      className="w-full bg-white border border-gray-400 rounded-lg shadow-sm px-4 py-3 text-gray-700 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 hover:border-gray-300 transition-all duration-300 ease-in-out appearance-none cursor-pointer"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex flex-col w-[40%] mx-10 my-2 shadow-lg justify-center items-center border-2 border-gray-300 rounded-lg p-6 bg-gray-100">
@@ -171,7 +184,7 @@ export default function Appointment() {
                     APPOINTMENT HEALTHCARE
                   </label>
                   <p className="text-gray-500 text-lg font-medium px-8 py-4 bg-white bg-opacity-60 rounded-lg shadow-lg hover:bg-opacity-80 transition-all duration-200">
-                    Book your appointment with the best doctors in the field. Choose a department in advance and then doctor, select a date, select suitable time and book your appointment now.
+                    Book your appointment with the best doctors in the field. Choose a department in advance and then doctor, select a date, select suitable time and book your appointment now. Note symtomps if any.
                   </p>
                 </div>
               </div>

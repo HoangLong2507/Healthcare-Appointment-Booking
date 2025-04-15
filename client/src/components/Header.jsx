@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from "react-router-dom";
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from "react-router-dom";
-import avatar1 from "../assets/avatar3.webp"
 import { FaChevronDown } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
+import { useLocation } from 'react-router-dom';
+import Avatar from './Avatar';
+
 
 export default function Header() {
   const navigate = useNavigate()
   const pages = [
     { name: "Home", path: "/" },
     { name: "Appointment", path: "/appointment" },
-    { name: "Doctor", path: "/signup"},
     { name: "AboutUs", path: "/about" }
   ];
   
-  const { logout, userInfor } = useAuth();
+  const { logout, userInfor, isDoctor } = useAuth();
 
   return (
     <header className="top-0 left-0 w-full h-[10vh] bg-white shadow-sm z-50">
@@ -41,7 +42,12 @@ export default function Header() {
               </NavLink>
             ))}
             { 
-
+              isDoctor? (<NavLink 
+                to={`/signup`} 
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
+                Doctor
+              </NavLink>): (<></>)
             }
           </nav>
 
@@ -74,18 +80,27 @@ export default function Header() {
 
 const UserDropdown = (({ userInfor, logout }) => {
   const dropdownMenu = [
-    { name: "Profile", path: "/" },
+    { name: "Profile", path: "/profile" },
     { name: "Appointment History", path: "/" },
   ];
-  
+  const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    setIsDropdownOpen(false);
+  }, [location]); 
+
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   return (
     <div className="relative">
       <div className="flex items-center space-x-2 text-gray-800 hover:text-gray-900 focus:outline-none">
-        <span className="text-3xl">{`${userInfor.Lname} ${userInfor.Fname}`}</span>
-        <FaUserCircle className="text-3xl" />
+        <span className="text-3xl">{`${userInfor.Lname} ${userInfor.Fname.split(' ').at(-1)}`}</span>
+        {userInfor.avatar ? (
+          <img src={userInfor.avatar} className="w-8 h-8 rounded-full" alt="avatar" />
+        ) : (
+          <FaUserCircle className="text-3xl" />
+        )}
         <FaChevronDown 
           className={`h-4 w-4 transform transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : 'rotate-0'}`} 
           onClick={toggleDropdown}  
@@ -96,7 +111,7 @@ const UserDropdown = (({ userInfor, logout }) => {
       {isDropdownOpen && (
         <div className="absolute right-0 mt-4 w-90 bg-white rounded-md py-1 z-50 border-2 border-gray-300 border-opacity-50 transition-all duration-300">
           <div className="text-xl flex items-center px-5 py-2 space-x-4 font-medium text-black border-b border-gray-300 border-opacity-50">
-            <img src={avatar1} className="h-12 w-12 rounded-full object-cover" alt="User Avatar" />
+            <Avatar avatar={userInfor.avatar} className="h-12 w-12"/>
             <div>
               <p>{`${userInfor.Lname} ${userInfor.Fname}`}</p>
               <p className="font-light">

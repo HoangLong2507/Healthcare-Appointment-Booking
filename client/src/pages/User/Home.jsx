@@ -187,7 +187,7 @@ const HomeIntro = ({navigate}) => {
         From preventive care to personalized treatment plans, our dedicated team of professionals works around the clock to ensure you receive the highest standard of medical attention. Whether you are seeking routine checkups, managing a chronic condition, or navigating complex medical needs, we’re here every step of the way — with compassion, expertise, and unwavering support. Your health is not just our mission — it’s our promise.</p>
         <div className="flex items-center ml-16 mt-4">
           <p className="text-3xl font-bold">LETS CREATE APPOINTMENT TO JOIN US</p>
-          <button onClick={()=>navigate('/login')} className=" ml-10 text-3xl px-6  items-center justify-center whitespace-nowrap py-3 rounded-3xl flex shadow-lg bg-gradient-to-r from-purple-500 to-blue-500 font-medium tracking-wide transition duration-300 transform hover:scale-105 hover:shadow-xl button-glow">
+          <button onClick={()=>navigate('/appointment')} className=" ml-10 text-3xl px-6  items-center justify-center whitespace-nowrap py-3 rounded-3xl flex shadow-lg bg-gradient-to-r from-purple-500 to-blue-500 font-medium tracking-wide transition duration-300 transform hover:scale-105 hover:shadow-xl button-glow">
             Get Started
             <span>
               <FaArrowRightLong className="ml-2 my-auto"  size={20} color="white" />

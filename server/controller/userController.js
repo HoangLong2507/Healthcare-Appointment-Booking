@@ -5,6 +5,10 @@ import Doctor from "../model/doctorModel.js";
 import sendEmail from "../utils/email.js";
 import MedicalRecord from "../model/medical-recordModel.js";
 import Rating from "../model/ratingModel.js";
+import cloudinary from "../utils/cloudinary.js";
+
+import fs from 'fs';
+
 export class UserController {
   async createAppointment(req,res,next) {
     const userid = req.user._id;
@@ -23,7 +27,11 @@ export class UserController {
         return next(new AppError(`Please set new appointment.${targettime}:00 - ${targettime}:59 time slot is full.`,400));
       }
       const appointment = await Appointment.create({date,time,doctor,user});
-            
+        
+      const searchKey = `appointment:create:${userid}`;
+      const redisClient = req.app.locals.redisClient;
+      await redisClient.setEx(searchKey,JSON.stringify(appointment)); 
+
       // send confirmation email
       const cur_user = await User.findById(userid);
       await sendEmail.send_confirmation_email(cur_user.email,time,date);
@@ -33,10 +41,25 @@ export class UserController {
         data: appointment
       });
     } catch (err) {
-      return next(new AppError('Something went wrong during appointment creation', 500));
+      return next(new AppError(err.message, 500));
     }
   }
-  
+  async getAppointmentCache(req,res,next) {
+    try {
+      const userid = req.user._id;
+      const searchkey = `appointment:create:${userid}`;
+      const redisClient = req.app.locals.redisClient;
+      const appointment = await redisClient.get(searchkey); 
+      return res.status(200).json({
+        status: "success",
+        appointment: JSON.parse(appointment)
+      });
+    } catch (err) {
+      return next(new AppError(err.message,400))
+    }
+    
+    
+  }
   async getUpcomingAppointment(req,res,next) {
     const userid = req.user._id;
     const {status} = req.body;
@@ -50,7 +73,7 @@ export class UserController {
         data: appointments
       });
     } catch (err) {
-      return next(new AppError('Error when fetching data', 500));
+      return next(new AppError('Error when fetching data', 400));
     }
   }
 
@@ -160,5 +183,31 @@ export class UserController {
     } catch (err) {
       console.log("Something went wrong:",err);
     }
+  }
+
+  async handleUploadImage(req,res,next) {
+    const userid = req.user._id;
+    const file = req.file; 
+    if (!file) {
+      return next(new AppError("No file uploaded",404))
+    }
+    try {
+      const result = await cloudinary.uploader.upload(file.path,{
+        folder:"Avatar",
+      });
+      const new_user = await User.findByIdAndUpdate(userid,{avatar: result.secure_url},{new:true});
+      console.log(new_user);
+      if (file && file.path) {
+        fs.unlinkSync(file.path);
+      }
+      return res.status(200).json({
+        status: "success",
+        imageUrl: result.secure_url,
+        user:new_user
+      });
+    } catch (err) {
+      console.log(err.message)
+      return next(new AppError(err.message,400));
+    } 
   }
 }

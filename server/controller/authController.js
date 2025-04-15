@@ -47,7 +47,7 @@ export class AuthController {
       await redisClient.del(userID); 
       console.log("Token deleted from Redis");
   
-      res.status(200).json({ status: "success" });
+      return res.status(200).json({ status: "success" });
     } catch (err) {
       return next(new AppError('Failed to logout', 500));  
     }

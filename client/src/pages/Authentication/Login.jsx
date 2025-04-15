@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -8,19 +8,26 @@ import { FaUser } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
+import { MdConstruction } from "react-icons/md";
 export default function Login() {
-  const navigate = useNavigate();
-  const { login, setUserInfor } = useAuth();
+  const { login, setUserInfor, userInfor } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showpassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate(); // hoặc session, context, cookie,...
+  const isLoggedIn = userInfor != null ? true: false;
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/", { replace: true }); // Chuyển hướng mà không lưu lại lịch sử
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -41,7 +48,7 @@ export default function Login() {
       
  
         setTimeout(() => {
-          navigate('/'); 
+          navigate('/',{replace:true}); 
           setUserInfor(result.user)
         }, 1000);
         
@@ -61,7 +68,7 @@ export default function Login() {
       <Header/>
       <Toaster ariaLive="assertive"/>
       <div className="min-h-[80vh] min-w-screen flex items-center justify-center auth">
-        <div className="bg-white p-8 rounded-lg shadow-lg w-[25vw] h-[55vh] border-4 border-gray-300 border-opacity-50 transition-all duration-300">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-[25vw] h-[65vh] border-4 border-gray-300 border-opacity-50 transition-all duration-300">
           <h2 className="text-5xl font-bold text-center mb-6">Login</h2>
           <form onSubmit={handleSubmit} className="border-b border-gray-300">
             <div className="mb-4">

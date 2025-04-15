@@ -3,7 +3,7 @@ import redisClient from './redis.js';
 
 const signToken = async (user,statusCode,res) => {
   const token= jwt.sign({id:user.ID},process.env.JWT_SECRET,{
-    expiresIn: Number(process.env.JWT_EXPIRES)*3600*1000
+    expiresIn: Number(process.env.JWT_EXPIRES)*3600
   });
   user.password=undefined;
   try {

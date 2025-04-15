@@ -35,7 +35,8 @@ const userSchema = new mongoose.Schema({
   insuarance: {
     number: {type: String},
     hospital: {type: String},
-    hospital_address: {type: String}
+    hospital_address: {type: String},
+    expired: {type: Date}
   },
   role: {
     type: String,
@@ -51,6 +52,10 @@ const userSchema = new mongoose.Schema({
   },
   bank_name: {
     type:String
+  },
+  avatar: {
+    type: String,
+    default: null
   }
 },{
   timestamps:true

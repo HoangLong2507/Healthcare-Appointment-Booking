@@ -18,7 +18,7 @@ export const AuthProvider = ({children}) => {
         
         } 
       } catch(err) {
-        console.error("Error while loading...",err)
+        console.error("Error while loading...",err);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
@@ -56,12 +56,15 @@ export const AuthProvider = ({children}) => {
 
   }
   const logout = async () => {
+    const userid = userInfor._id;
     delete api.defaults.headers.common['Authorization'];
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUserInfor(null);
     try {
-      await api.post('/api/v1/authentication/logout');
+      await api.post('/api/v1/authentication/logout/',{
+        "userID": userid
+      });
     } catch (err) {
       return {
         success: false,
