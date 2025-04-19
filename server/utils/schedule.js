@@ -5,7 +5,7 @@ import Doctor from '../model/doctorModel.js';
 import User from '../model/userModel.js';
 import Rating from '../model/ratingModel.js';
 
-const notification_periodic =  cron.schedule('* * * * *', async () => {
+const notification_periodic =  cron.schedule('* 7-18 * * 1-6', async () => {
   try {
     const upcoming_appointments = await Appointment.find({status: 'approved',notification: false}).populate('user','email');
     for (const appointment of upcoming_appointments) {

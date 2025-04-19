@@ -24,6 +24,6 @@ router.patch('/updateinformation',
 AuthController.prototype.isLoggedIn,UserController.prototype.updateInformation);
 router.post('/rating',
 AuthController.prototype.isLoggedIn,UserController.prototype.createRating);
-router.post('/uploadavatar',AuthController.prototype.isLoggedIn,upload.single('avatar'),UserController.prototype.handleUploadImage)
+router.post('/uploadimage',AuthController.prototype.isLoggedIn,upload.single('avatar'),UserController.prototype.handleUploadImage)
 
 export default router;

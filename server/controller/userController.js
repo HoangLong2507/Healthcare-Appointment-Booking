@@ -3,7 +3,6 @@ import AppError from '../utils/appError.js';
 import User from '../model/userModel.js';
 import Doctor from "../model/doctorModel.js";
 import sendEmail from "../utils/email.js";
-import MedicalRecord from "../model/medical-recordModel.js";
 import Rating from "../model/ratingModel.js";
 import cloudinary from "../utils/cloudinary.js";
 
@@ -12,7 +11,7 @@ import fs from 'fs';
 export class UserController {
   async createAppointment(req,res,next) {
     const userid = req.user._id;
-    const {date,time,doctor,user} = req.body;
+    const {date,time,doctor,user,reason} = req.body;
     try {
       if (!date || !time || !doctor || !user) {
         return next(new AppError('Please provide all the required fields', 400));
@@ -26,7 +25,7 @@ export class UserController {
       if (duplicate_appointments.length >=3) {
         return next(new AppError(`Please set new appointment.${targettime}:00 - ${targettime}:59 time slot is full.`,400));
       }
-      const appointment = await Appointment.create({date,time,doctor,user});
+      const appointment = await Appointment.create({date,time,doctor,user,reason});
         
       const searchKey = `appointment:create:${userid}`;
       const redisClient = req.app.locals.redisClient;
@@ -188,6 +187,7 @@ export class UserController {
   async handleUploadImage(req,res,next) {
     const userid = req.user._id;
     const file = req.file; 
+    const fieldfile = file.fieldname;
     if (!file) {
       return next(new AppError("No file uploaded",404))
     }
@@ -195,8 +195,7 @@ export class UserController {
       const result = await cloudinary.uploader.upload(file.path,{
         folder:"Avatar",
       });
-      const new_user = await User.findByIdAndUpdate(userid,{avatar: result.secure_url},{new:true});
-      console.log(new_user);
+      const new_user = await User.findByIdAndUpdate(userid,{[fieldfile]: result.secure_url},{new:true});
       if (file && file.path) {
         fs.unlinkSync(file.path);
       }

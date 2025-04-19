@@ -2,20 +2,26 @@ import signToken  from "../utils/jwtToken.js";
 import AppError from "../utils/appError.js";
 import jwt from 'jsonwebtoken';
 import User from "../model/userModel.js";
+import Doctor from "../model/doctorModel.js";
 
 export class AuthController {
   async login(req,res,next) {
-    const {email,password }= req.body;
+    const {email,password,role }= req.body;
     if (!email || !password) {
       return next(new AppError('Please provide email and password!', 400));
     }
     try {
-      const user = await User.findOne({ email }).select('+password');
+      const userPromise = User.findOne({ email,role }).select('+password');
+      const doctorPromise = Doctor.findOne({ email,role }).select('+password');
+
+      const [cur_user, cur_doctor] = await Promise.all([userPromise, doctorPromise]);
+      const user = cur_user || cur_doctor;
       if (!user || !await user.correctPassword(password, user.password)) {
         return next(new AppError('Incorrect email or password', 400));
       }
       signToken(user, 200, res);
     } catch (err) {
+      console.log(err.message)
       return next(new AppError('Something went wrong during login', 500));  
   }
   }
@@ -59,15 +65,14 @@ export class AuthController {
       return next(new AppError('You have not log in. Please log in', 400));
     }
     try {
-      
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const redisClient = req.app.locals.redisClient;
-      const tokenInRedis = await redisClient.get(decoded.id);
 
-      if (!tokenInRedis) {
-        return next(new AppError("Session expired. Please log in again !", 401));
-      }
-      const user = await User.findOne({ID:decoded.id});
+      let user = undefined;
+      console.log(decoded);
+      const userfind =  User.findOne({ID:decoded.id,role:decoded.role});
+      const doctorfind = Doctor.findOne({ID:decoded.id,role:decoded.role});
+      const [USER,DOCTOR] = await Promise.all([userfind,doctorfind]);
+      user = USER || DOCTOR;
       if (!user) {
         return next(new AppError('User not found', 404));
       }
@@ -75,6 +80,7 @@ export class AuthController {
       next();
     } 
     catch (err) {
+      console.log(err.message)
       if (err.name === 'TokenExpiredError') {
         return next(new AppError('Token has expired. Please log in again!', 401));
       }

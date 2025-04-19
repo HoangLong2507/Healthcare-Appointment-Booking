@@ -27,7 +27,6 @@ const AppointmentSchmema = new mongoose.Schema({
   },
   reason:{
     type:String,
-
   },
   canceled_reason: {
     type: String,

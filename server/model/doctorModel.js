@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import User from './userModel.js';
+import bcrypt from 'bcrypt';
 
 const doctorSchema = new mongoose.Schema({
   ID: {
@@ -31,8 +31,14 @@ const doctorSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user','doctor', 'admin'],
     default: 'doctor'
+  },
+  password: {
+    type:String,
+    required: [true,"Password is required"],
+    minlength: [8, "Password have at least 8 characters"],
+    maxlength: [16],
+    select:false
   },
   status: {
     type: String, 
@@ -43,6 +49,18 @@ const doctorSchema = new mongoose.Schema({
   timestamps:true
 });
 
+doctorSchema.pre('save', async function(next) {
+  if (this.password.length > 16 || this.password.length < 8) return next() 
+  
+  this.password = await bcrypt.hash(this.password, 12);
+
+  next();
+  
+});
+
+doctorSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const Doctor = mongoose.model('Doctor', doctorSchema);
 

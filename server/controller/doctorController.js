@@ -37,14 +37,24 @@ export class DoctorController {
     }
   }
 
-  async getDoctorAppointments  (req, res, next)  {
-    const {id} = req.params;
-    const status = req.body.status || 'pending';
+  async getDoctorAppointments(req, res, next) {
+    const { id } = req.params;
+    const { status, date } = req.query;
+  
     try {
-      const appointments = await Appointment.find({ doctor: id, status });
+      let filter = { doctor: id };
+  
+      if (status) {
+        filter.status = status;
+      } else if (date) {
+        filter.date = date;
+      } 
+      
+      const appointments = await Appointment.find(filter);
+  
       res.status(200).json({
         status: 'success',
-        data: appointments
+        data: appointments,
       });
     } catch (err) {
       next(new AppError(err.message, 400));
@@ -105,9 +115,9 @@ export class DoctorController {
   }
   async updateAppointmentStatus  (req, res, next)  {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, canceled_reason } = req.body;
     try {
-      const appointment = await Appointment.findByIdAndUpdate(id, { status
+      const appointment = await Appointment.findByIdAndUpdate(id, { status,canceled_reason
       }, { new: true });    
       if (!appointment) {
         return next(new AppError('No appointment found with that ID', 404));
@@ -122,23 +132,6 @@ export class DoctorController {
       next(new AppError(err.message, 400));
     }
   }
-
-  async cancelAppointment(req,res,next) {
-    const {id} = req.params;
-    try {
-      const appointment = await Appointment.findByIdAndUpdate(id, {status: 'canceled', canceled_reason: "Doctor cancel", canceledAt: Date.now()}, {new: true});
-      if (!appointment) {
-        return next(new AppError('No appointment found with that ID', 404));
-      }
-      res.status(201).json({
-        status: 'success',
-        message: 'Appointment canceled successfully'
-      });
-    } catch (err) { 
-      return next(new AppError('Something went wrong during appointment cancelation', 500));
-    } 
-  }
-
 
 }
 

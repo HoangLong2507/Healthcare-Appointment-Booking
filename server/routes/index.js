@@ -6,7 +6,7 @@ import doctorRoutes from "./doctorRoutes.js";
 const router = express.Router();
 
 router.use('/authentication', authRoutes);
-router.use('/', userRoutes);
+router.use('/user', userRoutes);
 router.use('/doctor', doctorRoutes);
 
 export default router;

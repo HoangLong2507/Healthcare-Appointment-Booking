@@ -1,14 +1,10 @@
 import jwt from 'jsonwebtoken';
-import redisClient from './redis.js';
-
 const signToken = async (user,statusCode,res) => {
-  const token= jwt.sign({id:user.ID},process.env.JWT_SECRET,{
+  const token= jwt.sign({id:user.ID, role: user.role},process.env.JWT_SECRET,{
     expiresIn: Number(process.env.JWT_EXPIRES)*3600
   });
   user.password=undefined;
-  try {
-    await redisClient.setEx(user.ID, token);
-    
+  try {  
     res.status(statusCode).json({
       status:"success",
       user,
